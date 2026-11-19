@@ -1,0 +1,119 @@
+#include <iostream>
+#include <string>
+using namespace std;
+class Vehicle {
+protected:
+    string reg;
+    double dailyRate;
+    bool rented = false;
+public:
+    Vehicle(string r, double rate) : reg(r), dailyRate(rate) {}
+    virtual double rentalCharge(int days) const = 0;
+    bool rent() {
+        if (rented)
+            return false;
+        rented = true;
+        return true;
+    }
+    void returnVehicle() {
+        rented = false;
+    }
+    virtual void display() const = 0;
+    virtual ~Vehicle() = default;
+};
+class Bicycle : public Vehicle {
+public:
+    using Vehicle::Vehicle;
+    double rentalCharge(int d) const override {
+        return dailyRate * d;
+    }
+    void display() const override {
+        cout << "Bicycle Registration: " << reg << endl;
+        cout << "Daily Rate: " << dailyRate << endl;
+    }
+};
+class MotorVehicle : public Vehicle {
+protected:
+    double fuelLevel;
+    string serviceDue;
+public:
+    MotorVehicle(string r, double rate, double f, string due)
+        : Vehicle(r, rate), fuelLevel(f), serviceDue(due) {}
+};
+class TwoWheeler : public MotorVehicle {
+public:
+    TwoWheeler(string r, double rate, double f, string due)
+        : MotorVehicle(r, rate, f, due) {}
+    double rentalCharge(int d) const override {
+        return dailyRate * d;
+    }
+    void display() const override {
+        cout << "Two-Wheeler Registration: " << reg << endl;
+        cout << "Daily Rate: " << dailyRate << endl;
+        cout << "Fuel Level: " << fuelLevel << "%" << endl;
+        cout << "Service Due: " << serviceDue << endl;
+    }
+};
+class Car : public MotorVehicle {
+protected:
+    int seats;
+public:
+    Car(string r, double rate, double f, string due, int s)
+        : MotorVehicle(r, rate, f, due), seats(s) {}
+    double rentalCharge(int d) const override {
+        return dailyRate * d;
+    }
+    void display() const override {
+        cout << "Car Registration: " << reg << endl;
+        cout << "Daily Rate: " << dailyRate << endl;
+        cout << "Fuel Level: " << fuelLevel << "%" << endl;
+        cout << "Service Due: " << serviceDue << endl;
+        cout << "Seats: " << seats << endl;
+    }
+};
+class ElectricCar : public Car {
+    double batteryKWh;
+public:
+    ElectricCar(string r, double rate, double f, string due,
+                int s, double k)
+        : Car(r, rate, f, due, s), batteryKWh(k) {}
+    double rentalCharge(int d) const override {
+        return dailyRate * d;
+    }
+    void display() const override {
+        cout << "Electric Car Registration: " << reg << endl;
+        cout << "Daily Rate: " << dailyRate << endl;
+        cout << "Battery Capacity: " << batteryKWh << " kWh" << endl;
+        cout << "Seats: " << seats << endl;
+    }
+};
+int main() {
+    Bicycle b("BI101", 200);
+    TwoWheeler t("TW102", 500, 80, "15-12-2026");
+    Car c("CA103", 1500, 70, "20-12-2026", 5);
+    ElectricCar e("EV104", 2000, 100, "25-12-2026", 5, 60);
+    cout << "--- Bicycle ---" << endl;
+    b.display();
+    cout << "Rental Charge for 3 days: " << b.rentalCharge(3) << endl;
+    cout << "\n--- Two-Wheeler ---" << endl;
+    t.display();
+    cout << "Rental Charge for 3 days: " << t.rentalCharge(3) << endl;
+    cout << "\n--- Car ---" << endl;
+    c.display();
+    cout << "Rental Charge for 3 days: " << c.rentalCharge(3) << endl;
+    cout << "\n--- Electric Car ---" << endl;
+    e.display();
+    cout << "Rental Charge for 3 days: " << e.rentalCharge(3) << endl;
+    cout << "\n--- Rental Status ---" << endl;
+    if (b.rent())
+        cout << "Bicycle rented successfully." << endl;
+    else
+        cout << "Bicycle is already rented." << endl;
+    if (b.rent())
+        cout << "Bicycle rented successfully." << endl;
+    else
+        cout << "Bicycle is already rented." << endl;
+    b.returnVehicle();
+    cout << "Bicycle returned successfully." << endl;
+    return 0;
+}
